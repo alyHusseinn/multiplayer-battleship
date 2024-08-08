@@ -5,12 +5,14 @@ class Player {
     private avaliableShips: number;
     private isShipsHorizontal: boolean;
     private board: Board;
+    private id: string;
 
-    constructor(name: string) {
+    constructor(name: string, id: string) {
         this.name = name;
         this.avaliableShips = 5;
         this.isShipsHorizontal = true;
         this.board = new Board();
+        this.id = id;
     }
 
     public addShip(coord: Coord): boolean {
@@ -33,6 +35,10 @@ class Player {
 
     public getName(): string {
         return this.name;
+    }
+
+    public getId(): string {
+        return this.id;
     }
 
     public rotateShip(): boolean {
@@ -79,6 +85,3 @@ class Player {
 }
 
 export default Player;
-
-
-
