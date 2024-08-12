@@ -18,7 +18,8 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "morgan": "^1.10.0",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -27,6 +28,7 @@
     "@types/jest": "^29.5.12",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.2",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.12.0",
     "eslint": "^9.4.0",
