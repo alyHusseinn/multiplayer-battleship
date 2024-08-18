@@ -57,6 +57,14 @@ class Game {
         return this.activePlayer.getId();
     }
 
+    public getPlayerWithId(id: string): Player | undefined {
+        if (this.player1.getId() == id) {
+            return this.player1;
+        } else if (this.player2.getId() == id) {
+            return this.player2;
+        }
+    }
+
     private switchPlayers(): void {
         [this.nonActivePlayer, this.activePlayer] = [this.activePlayer, this.nonActivePlayer];
     }
