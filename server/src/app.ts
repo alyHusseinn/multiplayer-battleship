@@ -43,10 +43,11 @@ io.on('connection', (socket) => {
         const player = notReadyPlayers.get(socket.id);
         if (!player) return;
 
-        const result = player.addShip(coord);
-        socket.emit('align ships result', result);
+        const isAligned = player.addShip(coord);
+        socket.emit('align ships result', { isAligned, board: player.getPlayerBoard() });
 
         if (player.isReady()) {
+            socket.emit('player is ready');
             notReadyPlayers.delete(socket.id);
             availablePlayers.set(socket.id, player);
         }
@@ -87,6 +88,15 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('player board', (gameId: string) => {
+        // after deleted from the avaliable players
+        const game = games.get(gameId);
+        if (!game) return;
+        const player = game.getPlayerWithId(socket.id);
+        if (!player) return;
+        socket.emit('player board', player.getPlayerBoard());
+    })
+
     // Handle hit event
     socket.on('hit', ({ gameId, cord }: { gameId: string, cord: Coord }) => {
         const game = games.get(gameId);
@@ -97,7 +107,7 @@ io.on('connection', (socket) => {
             io.to(gameId).emit('hit result', {
                 cord,
                 result,
-                isYou: socket.id === game.getNonActivePlayerId()
+                isYou: socket.id === game.getNonActivePlayerId() // is You means the player that hitting
             });
 
             if (game.isGameOver()) {
