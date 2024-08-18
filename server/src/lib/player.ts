@@ -62,9 +62,9 @@ class Player {
         return this.board.isHittedCell(coord);
     }
 
-    // public getGameBoard(): Board {
-    //     return this.board;
-    // }
+    public getPlayerBoard(): Array<Array<number>> {
+        return this.board.getBoardValues();
+    }
 
     public getAvaliableShips(): number {
         return this.avaliableShips;
