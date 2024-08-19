@@ -7,6 +7,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import socket from "../socket";
 
 const Home = () => {
   const [name, setName] = useState("");
@@ -15,6 +16,9 @@ const Home = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     sessionStorage.setItem("playerName", name);
+
+    socket.emit("new player", name);
+
     navigator("/board");
   };
 
