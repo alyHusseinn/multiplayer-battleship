@@ -55,8 +55,8 @@ io.on('connection', (socket) => {
 
     // Rotate ship event
     socket.on('rotate ship', () => {
-        const player = availablePlayers.get(socket.id);
-        if (player) player.rotateShip();
+        const player = notReadyPlayers.get(socket.id);
+        player?.rotateShip();
     });
 
     // Start game event
