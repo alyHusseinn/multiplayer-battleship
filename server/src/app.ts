@@ -60,33 +60,53 @@ io.on('connection', (socket) => {
     });
 
     // Start game event
-    socket.on('start game', () => {
+    socket.on('start game', async () => {
         const player = availablePlayers.get(socket.id);
         if (!player) return;
 
+        // Remove the player from the available players list
         availablePlayers.delete(socket.id);
+
+        // Get the first available opponent
         const opponentId = [...availablePlayers.keys()][0];
 
         if (opponentId) {
             const opponent = availablePlayers.get(opponentId) as Player;
+
+            // Create a new game instance
             const game = new Game(player, opponent);
-            games.set(game.getGameId(), game);
+            const gameId = game.getGameId();
+
+            // Store the game
+            games.set(gameId, game);
 
             // Join both players to the game room
-            socket.join(game.getGameId());
-            io.to(opponentId).socketsJoin(game.getGameId());
+            socket.join(gameId);  // Add current player to the room
+            io.to(opponentId).socketsJoin(gameId);  // Add opponent to the room
 
-            // Notify players about game start
-            io.to(game.getGameId()).emit('game started', {
-                gameId: game.getGameId(),
+            console.log(`Player ${player.getId()} and Opponent ${opponent.getId()} joined room: ${gameId}`);
+
+            // Notify both players about the game start
+            io.to(player.getId()).emit('game started', {
+                gameId,
                 opponent: opponent.getName()
             });
 
+            io.to(opponentId).emit('game started', {
+                gameId,
+                opponent: player.getName()
+            });
+
+            // Remove the opponent from the available players list
             availablePlayers.delete(opponentId);
+
         } else {
+            // If no opponent is available, add the player back to the available players list
             availablePlayers.set(socket.id, player);
+            console.log("No opponent available. Player added back to availablePlayers.");
         }
     });
+
 
     socket.on('player board', (gameId: string) => {
         // after deleted from the avaliable players
@@ -104,11 +124,12 @@ io.on('connection', (socket) => {
 
         try {
             const result = game.playRound(cord, socket.id);
-            io.to(gameId).emit('hit result', {
+            socket.emit("you hitted", { cord, result });
+            // Send hit result to the other player
+            io.to(game.getActivePlayerId()).emit('opponent hitted', {
                 cord,
                 result,
-                isYou: socket.id === game.getNonActivePlayerId() // is You means the player that hitting
-            });
+            })
 
             if (game.isGameOver()) {
                 const winner = game.getWinner();
@@ -116,8 +137,9 @@ io.on('connection', (socket) => {
                     io.to(gameId).emit('game over', { winner });
                 }
             }
-        } catch (err) {
-            socket.emit('error hitting', "It's not your turn");
+        } catch (err: unknown) {
+            if (err instanceof Error)
+                socket.emit('error hitting', err.message);
         }
     });
 
