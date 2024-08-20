@@ -44,6 +44,9 @@ class Board {
     /*determines whether or not the attack hit a ship and then sends the ‘hit’ function 
     to the correct ship, or records the coordinates of the missed shot.*/
     public receiveAttack(coord: Coord) {
+        if(this.isHittedCell(coord)) {
+            throw new Error("Already hitted");
+        }
         const [rowIdx, colIdx] = coord;
 
         if (this.board[rowIdx][colIdx].hasShip()) {
