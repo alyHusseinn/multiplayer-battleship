@@ -11,6 +11,7 @@ const Board = () => {
   const [shipSize, setShipSize] = useState<number>(5);
   const [isHorizontal, setIsHorizontal] = useState<boolean>(true);
   const [hoveredCells, setHoveredCells] = useState<Set<string>>(new Set());
+  const [isLoadding, setIsLoadding] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -25,10 +26,13 @@ const Board = () => {
     });
 
     socket.on(
-      "game Started",
+      "game started",
       ({ gameId, opponent }: { gameId: string; opponent: string }) => {
+        console.log("game started with", opponent); 
+        setIsLoadding(false);
         sessionStorage.setItem("gameId", gameId);
         sessionStorage.setItem("opponent", opponent);
+        navigate("/game");
       }
     );
   });
@@ -62,10 +66,12 @@ const Board = () => {
 
   const handleStartTheGame = () => {
     socket.emit("start game");
-    navigate("/game");
+    // navigate("/game");
     if (!isReady) {
       setError("You must place your ships before starting the game");
-    }
+      return;
+    }    
+    setIsLoadding(true);
   };
 
   const handleMouseOver = (row: number, col: number) => {
@@ -117,7 +123,7 @@ const Board = () => {
           }`}
           onClick={handleStartTheGame}
         >
-          Start The Game
+          {isLoadding ? "Loading..." : "Start The Game!"}
         </button>
       </div>
 
