@@ -5,6 +5,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/home.tsx";
 import Board from "./components/board.tsx";
+import Game from "./components/game.tsx";
 
 
 const router = createBrowserRouter([
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/game",
-    element: <div>Game</div>,
+    element: <Game/>,
   },
 ]);
 
