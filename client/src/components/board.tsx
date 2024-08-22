@@ -35,6 +35,12 @@ const Board = () => {
         navigate("/game");
       }
     );
+
+    return () => {
+      socket.off("align ships result");
+      socket.off("player is ready");
+      socket.off("game started");
+    }
   });
 
   const getAffectedCells = (row: number, col: number): Set<string> => {
