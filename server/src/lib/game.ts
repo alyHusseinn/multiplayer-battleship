@@ -10,6 +10,7 @@ class Game {
     private activePlayer: Player;
     private nonActivePlayer: Player;
     private gameId: string;
+    private winnerId: string | undefined;
 
     constructor(player1: Player, player2: Player) {
         this.player1 = player1;
@@ -27,24 +28,26 @@ class Game {
         return this.gameId;
     }
 
-    public playRound(cord: Coord, id: string): boolean {
+    public playRound(cord: Coord, id: string): boolean | undefined {
         if (id != this.activePlayer.getId()) {
             throw new Error('Not your turn');
         }
-
-        const result = this.nonActivePlayer.receiveAttack(cord);
         if (!this.isGameOver()) {
+            const res = this.nonActivePlayer.receiveAttack(cord);
             this.switchPlayers();
+            return res;
         }
-        return result;
+        return undefined;
     }
 
-    public getWinner(): string | undefined {
+    public getWinner(): { name: string, id: string } | undefined {
         if (this.isGameOver()) {
             if (this.player1.hasLost()) {
-                return this.player2.getName()
+                this.winnerId = this.player2.getId();
+                return { name: this.player2.getName(), id: this.player2.getId() };
             } else {
-                return this.player1.getName()
+                this.winnerId = this.player1.getId();
+                return { name: this.player1.getName(), id: this.player1.getId() };
             }
         }
     }
