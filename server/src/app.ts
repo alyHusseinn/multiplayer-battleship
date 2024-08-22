@@ -114,7 +114,7 @@ io.on('connection', (socket) => {
         if (!game) return;
         const player = game.getPlayerWithId(socket.id);
         if (!player) return;
-        socket.emit('player board', player.getPlayerBoard());
+        socket.emit('player board', { board: player.getPlayerBoard(), isYourTurn: game.getActivePlayerId() === socket.id });
     })
 
     // Handle hit event
@@ -132,9 +132,9 @@ io.on('connection', (socket) => {
             })
 
             if (game.isGameOver()) {
-                const winner = game.getWinner();
+                const winner = game.getWinner() as { name: string, id: string };
                 if (winner) {
-                    io.to(gameId).emit('game over', { winner });
+                    io.to(gameId).emit('game over', { name: winner.name, isYou: winner.id === socket.id });
                 }
             }
         } catch (err: unknown) {
