@@ -137,8 +137,6 @@ io.on('connection', (socket) => {
                 sockets.forEach(socket => {
                     socket.emit('game over', { name: winner.name, isYou: winner.id === socket.id });
                 })
-
-                // io.to(gameId).emit('game over', { name: winner.name, isYou: winner.id === socket.id });
             }
         } catch (err: unknown) {
             if (err instanceof Error)
