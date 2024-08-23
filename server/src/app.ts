@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
     })
 
     // Handle hit event
-    socket.on('hit', ({ gameId, cord }: { gameId: string, cord: Coord }) => {
+    socket.on('hit', async ({ gameId, cord }: { gameId: string, cord: Coord }) => {
         const game = games.get(gameId);
         if (!game) return;
 
@@ -133,9 +133,12 @@ io.on('connection', (socket) => {
 
             if (game.isGameOver()) {
                 const winner = game.getWinner() as { name: string, id: string };
-                if (winner) {
-                    io.to(gameId).emit('game over', { name: winner.name, isYou: winner.id === socket.id });
-                }
+                const sockets = await io.in(gameId).fetchSockets();
+                sockets.forEach(socket => {
+                    socket.emit('game over', { name: winner.name, isYou: winner.id === socket.id });
+                })
+
+                // io.to(gameId).emit('game over', { name: winner.name, isYou: winner.id === socket.id });
             }
         } catch (err: unknown) {
             if (err instanceof Error)
