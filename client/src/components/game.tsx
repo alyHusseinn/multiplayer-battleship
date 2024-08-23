@@ -66,7 +66,7 @@ const Game = () => {
   return (
     <div className="sm:h-screen w-screen flex flex-col items-center justify-center bg-primary relative">
       {isYouWin && <Confetti />}
-      <h1 className="text-3xl font-bold text-center bg-secondary text-primary p-4 text-wrap">
+      <h1 className="text-3xl font-bold text-center bg-secondary text-primary p-4 text-wrap leading-10">
         The Game Started with{" "}
         <span className="bg-primary text-secondary p-2 border-0 rounded-md">
           {sessionStorage.getItem("opponent")?.toString()}{" "}
@@ -87,14 +87,12 @@ const Game = () => {
             "'s Turn (Your ships Under Attack :("}
       </h1>
       <div className="flex flex-col items-center w-full">
-        <div className="flex flex-col sm:flex-row sm:justify-center lg:justify-between items-center my-4">
+        <div className="flex flex-col sm:flex-row sm:justify-center gap-4 lg:justify-between items-center my-4">
           <div
             className={clsx(
-              "opponentboard  sm:w-1/2 w-70 h-70  flex flex-col gap-4 justify-center items-center transition-all duration-500 rounded-md border-0",
+              "opponentboard  sm:w-6/12  w-3/4  flex flex-col gap-4 justify-center items-center transition-all duration-500 rounded-md border-0",
               {
-                "bg-secondary": isYourTurn,
-                "p-4": isYourTurn,
-                "p-2": !isYourTurn,
+                "bg-secondary p-4": isYourTurn,
               }
             )}
           >
@@ -108,7 +106,7 @@ const Game = () => {
             </h1>
             <div
               className={clsx(
-                "board grid grid-cols-10  border-4 border-collapse transition-all duration-500 border-secondary"
+                "board grid grid-cols-10 w-full border-4 border-collapse transition-all duration-500 border-secondary"
               )}
             >
               {opponentboard.map((row, rowindex) =>
@@ -116,14 +114,13 @@ const Game = () => {
                   <div
                     id={`${rowindex}-${cellindex}`}
                     className={clsx(
-                      "cell w-12 h-12 sm:w-8 sm:h-8 border border-secondary hover:bg-secondary",
+                      "cell  w-8 h-8  border border-secondary hover:bg-secondary",
                       {
                         "bg-ship": cell > 0,
                         "bg-hit": cell === -2,
                         "bg-not-hit": cell === -1,
                         "bg-primary": cell === 0,
-                        "pointer-events-none": !isYourTurn,
-                        "cursor-not-allowed": !isYourTurn,
+                        "pointer-events-non cursor-not-allowede": !isYourTurn,
                         "cursor-pointer": isYourTurn,
                       }
                     )}
@@ -136,10 +133,9 @@ const Game = () => {
           </div>
           <div
             className={clsx(
-              "playerboard w-full sm:w-1/2 ml-4 flex flex-col gap-4 justify-center items-center rounded-md border-0 transition-all duration-500",
+              "playerboard sm:w-6/12  w-3/4 flex flex-col gap-4 justify-center items-center rounded-md border-0 transition-all duration-500",
               {
-                "bg-secondary": !isYourTurn,
-                "p-4": !isYourTurn,
+                "bg-secondary p-4": !isYourTurn,
               }
             )}
           >
@@ -153,7 +149,7 @@ const Game = () => {
             </h1>
             <div
               className={clsx(
-                "board grid grid-cols-10 border-4 border-collapse border-secondary"
+                "board grid w-full grid-cols-10 border-4 border-collapse border-secondary"
               )}
             >
               {playerboard.map((row, rowindex) =>
@@ -161,7 +157,7 @@ const Game = () => {
                   <div
                     id={`${rowindex}-${cellindex}`}
                     className={clsx(
-                      "cell w-12 h-12 sm:w-8 sm:h-8  border border-secondary cursor-not-allowed",
+                      "cell  w-8 h-8  border border-secondary cursor-not-allowed",
                       {
                         "bg-ship": cell > 0,
                         "bg-hit": cell === -2,
@@ -191,19 +187,38 @@ const Game = () => {
 
 function GameOver({ isYouWin }: { isYouWin: boolean }) {
   const navigate = useNavigate();
+
+  const handleNewGame = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
   return (
     <div className="w-full h-full flex flex-col justify-center items-center absolute top-0 left-0 bg-black bg-opacity-50 transition-all duration-700">
-      <div className="flex flex-col items-center bg-secondary w-full border-t-4 border-b-4 border-primary p-4">
+      <div
+        className={clsx(
+          "flex flex-col items-center  w-full border-t-4 border-b-4 border-primary p-4",
+          { "bg-hit": isYouWin, "bg-ship": !isYouWin }
+        )}
+      >
         <h1
-          className={clsx("text-2xl font-bold text-center m-2 text-primary ")}
+          className={clsx("text-2xl font-bold text-center m-2 ", {
+            "text-secondary": isYouWin,
+            "text-primary": !isYouWin,
+          })}
         >
-          {isYouWin ? "You Win!" : "You Lose!"}
+          {isYouWin
+            ? `Congratulations Captian ${sessionStorage.getItem(
+                "playerName"
+              )} You Are the Winner!`
+            : `You Lost!, Capitian ${sessionStorage.getItem(
+                "opponent"
+              )} has beat you!`}
         </h1>
         <button
           className="bg-primary font-bold border-0 rounded-md p-4 text-2xl text-secondary cursor-pointer transition-all duration-500 ease-in-out hover:scale-105"
-          onClick={() => navigate("/")}
+          onClick={handleNewGame}
         >
-          Play Again
+          New Game?
         </button>
       </div>
     </div>
