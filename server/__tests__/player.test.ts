@@ -5,7 +5,7 @@ describe('Player class', () => {
     let player: Player;
 
     beforeEach(() => {
-        player = new Player('TestPlayer');
+        player = new Player('TestPlayer', '1234');
     });
 
     describe('Initialization', () => {
