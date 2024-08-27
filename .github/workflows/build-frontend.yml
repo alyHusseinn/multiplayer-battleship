@@ -1,0 +1,30 @@
+name: building the frontend
+
+on: [push, pull_request]
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22" # Specify your Node.js version
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install --legacy-peer-deps
+
+      # Build the frontend
+      - name: Build the frontend
+        run: |
+          cd client
+          npm run build
